@@ -8,7 +8,7 @@ import 'package:http/http.dart' as http;
 class StripeHandler {
   late Map<String, dynamic>? paymentIntent;
 
-  Future<void> makePayment() async {
+  Future<void> makePayment(BuildContext context) async {
     try {
       paymentIntent = await createPaymentIntent('10000', 'USD');
 
@@ -19,7 +19,9 @@ class StripeHandler {
                   style: ThemeMode.dark,
                   merchantDisplayName: 'AK'))
           .then((value) {});
-      displayPaymentResult();
+      if (context.mounted) {
+        displayPaymentResult(context);
+      }
     } catch (e) {
       print(e.toString());
     }
@@ -45,12 +47,16 @@ class StripeHandler {
     }
   }
 
-  void displayPaymentResult() async {
+  void displayPaymentResult(BuildContext context) async {
     try {
-      await Stripe.instance
-          .presentPaymentSheet()
-          .then((value) {})
-          .onError((error, stackTrace) {
+      await Stripe.instance.presentPaymentSheet().then((value) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          behavior: SnackBarBehavior.floating,
+          backgroundColor: Colors.green.shade400,
+          content: const Text('Payment successful'),
+          dismissDirection: DismissDirection.startToEnd,
+        ));
+      }).onError((error, stackTrace) {
         print(error);
       });
     } catch (e) {

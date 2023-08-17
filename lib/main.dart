@@ -59,7 +59,7 @@ class _StripePaymentGatewayState extends State<StripePaymentGateway> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             ElevatedButton(
-                onPressed: () => StripeHandler().makePayment(),
+                onPressed: () => StripeHandler().makePayment(context),
                 child: const Text('Pay \$1000'))
           ],
         ),
