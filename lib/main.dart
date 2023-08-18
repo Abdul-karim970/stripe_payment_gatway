@@ -3,6 +3,9 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:stripe_payment_gatway/stripe_handler.dart';
 
+import 'jazzcash_handler.dart';
+import 'jazzcash_product.dart';
+
 void initializePayment() async {
   WidgetsFlutterBinding.ensureInitialized();
   Stripe.publishableKey =
@@ -41,6 +44,7 @@ class StripePaymentGateway extends StatefulWidget {
 }
 
 class _StripePaymentGatewayState extends State<StripePaymentGateway> {
+  Product product = Product(name: 'AK', price: '10');
   @override
   void initState() {
     super.initState();
@@ -60,10 +64,24 @@ class _StripePaymentGatewayState extends State<StripePaymentGateway> {
           children: <Widget>[
             ElevatedButton(
                 onPressed: () => StripeHandler().makePayment(context),
-                child: const Text('Pay \$1000'))
+                child: const Text('Pay \$1000')),
+            ElevatedButton(
+                onPressed: () async {
+                  try {
+                    makePaymentViaJazzCash(context, product);
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Payment canceled!\n$e')));
+                  }
+                },
+                child: const Text('Pay via Jazzcash'))
           ],
         ),
       ),
     );
   }
 }
+
+// Jazzcash package owner github:
+
+// https://github.com/DigiX-Technologies/jazzcash_flutter
